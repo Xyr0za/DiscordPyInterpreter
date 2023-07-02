@@ -1,10 +1,7 @@
 from discord.ext import commands
+from discord.ui import Button, View
 import discord
 import time
-
-import threading
-
-
 import logging
 from hotreload import Loader
 
@@ -13,7 +10,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     script = Loader("exece.py")
 
-BOT_TOKEN = # DISCORD TOKEN
+BOT_TOKEN = 
 CHANNEL_ID = None
 1
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
@@ -23,7 +20,6 @@ bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
 def validity_query(msg):
     lines = msg.split("\n")
-    err = None
 
     if (lines[0][0:] != "```py") or (lines[-1] != "```") or ("input(" in msg):
 
@@ -54,19 +50,65 @@ def refactor(code):
 
 @bot.command()
 async def run(ctx, arg):
+
+    button = Button(label="Rerun", style=discord.ButtonStyle.green)
+    blank = View()
+    view = View()
+    view.add_item(button)
+
+    # async def button_callback(interaction):
+    #     global editable
+    #     await interaction.response.defer()
+    #
+    #     currentMessage = await ctx.fetch_message(arg)
+    #     isValid = validity_query(message.content)
+    #
+    #     if valid[0]:
+    #
+    #         editable = await ctx.channel.send(f"**{arg}**\n```py\nRefactoring...\n```", view=blank)
+    #
+    #         await editable.edit(content=f"\n```py\nCompiling...\n```")
+    #         open('exece.py', 'w').close()
+    #         with open("exece.py", "a") as f:
+    #             f.write(refactor(message.content))
+    #             f.close()
+    #
+    #         # Time for the file to update and save for the hotreload to work
+    #
+    #         time.sleep(5)
+    #
+    #         await editable.edit(content=f"\n```py\nExecuting...\n```")
+    #
+    #         # Sets the content box to the output of the file
+    #         cont = None
+    #         cont = "\n".join([str(x) for x in script.main()])
+    #
+    #         if cont != None:
+    #             await editable.edit(content=f"\n```py\n{cont}\n```", view=view)
+    #             return None
+    #
+    #         # If the
+    #         await editable.edit(content=f"\n```py\nEXECUTION FAILED\nSYNTAX ERROR\n```")
+    #
+    #     else:
+    #
+    #         editable = await ctx.channel.send("Output:\n```py\nExecuting...\n```")
+    #         await editable.edit(content=f"\n```py\nEXECUTION FAILED\n-----------------\n{valid[1]}\n```")
+
+    # REPEAT- DRY be dammed
+
+    # button.callback = button_callback
+
     await ctx.message.delete()
-
     message = await ctx.fetch_message(arg)
-
     valid = validity_query(message.content)
 
     if valid[0]:
 
-        title = await ctx.channel.send(f"**{arg}**: ")
-        editable = await ctx.channel.send("\n```py\nRefactoring...\n```")
+        editable = await ctx.channel.send(f"**{arg}**\n```py\nRefactoring...\n```", view=blank)
 
         time.sleep(1)
-        await editable.edit(content=f"\n```py\nCompiling...\n```")
+        await editable.edit(content=f"**{arg}**\n```py\nCompiling...\n```")
         open('exece.py', 'w').close()
         with open("exece.py", "a") as f:
             f.write(refactor(message.content))
@@ -76,27 +118,27 @@ async def run(ctx, arg):
 
         time.sleep(5)
 
-        await editable.edit(content=f"\n```py\nExecuting...\n```")
+        await editable.edit(content=f"**{arg}**\n```py\nExecuting...\n```")
 
         # Sets the content box to the output of the file
         cont = None
         cont = "\n".join([str(x) for x in script.main()])
 
         if cont != None:
-            await editable.edit(content=f"\n```py\n{cont}\n```")
+            await editable.edit(content=f"**{arg}**\n```py\n{cont}\n```", view=blank) # view)
             return None
 
         # If the
-        await editable.edit(content=f"\n```py\nEXECUTION FAILED\nSYNTAX ERROR\n```")
+        await editable.edit(content=f"**{arg}**\n```py\nEXECUTION FAILED\nSYNTAX ERROR\n```")
 
     else:
 
-        editable = await ctx.channel.send("Output:\n```py\nExecuting...\n```")
-        await editable.edit(content=f"\n```py\nEXECUTION FAILED\n-----------------\n{valid[1]}\n```")
+        editable = await ctx.channel.send(f"**{arg}**\n```py\nExecuting...\n```")
+        await editable.edit(content=f"**{arg}**\n```py\nEXECUTION FAILED\n-----------------\n{valid[1]}\n```")
 
 
 @bot.command()
-async def rerun(ctx):
+async def reruner(ctx):
     await ctx.message.delete()
     editable = await ctx.channel.send("Output:\n```py\nExecuting...\n```")
     cont = "\n".join([str(x) for x in script.main()])
