@@ -13,7 +13,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     script = Loader("exece.py")
 
-BOT_TOKEN = "MTEyNDQyNTUwNjcwMDQxMDg4MA.GnQOze.-5FWqbaSQ6CZXShMQQ0e043ntjrciMA2wHbNn8"
+BOT_TOKEN = # DISCORD TOKEN
 CHANNEL_ID = None
 1
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
